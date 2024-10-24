@@ -5,10 +5,14 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:security="http://www.springframework.org/schema/security"
 	xmlns:task="http://www.springframework.org/schema/task"	
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
@@ -69,8 +73,30 @@
 	-->
 	<security:global-method-security pre-post-annotations="enabled"
 	secured-annotations="enabled" />
+
+	<tx:annotation-driven proxy-target-class="true"/>
 	
 	<context:component-scan base-package="com.buff" />
+    <!-- AOP Pointcut/Advisor 설정 -->
+    <aop:config>
+        <aop:pointcut id="txMethod" expression="execution(* com.buff..*Service.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txMethod"/>
+    </aop:config>
+
+    <!-- AOP Transaction을 실행하는 대상 Method 설정 -->
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="insert*"  rollback-for="Exception"></tx:method>
+            <tx:method name="create*" rollback-for="Exception"></tx:method>
+            <tx:method name="update*" rollback-for="Exception"></tx:method>
+            <tx:method name="delete*" rollback-for="Exception"></tx:method>
+            <tx:method name="edit*" rollback-for="Exception"></tx:method>
+            <tx:method name="regist*" rollback-for="Exception"></tx:method>
+            <tx:method name="remove*" rollback-for="Exception"></tx:method>
+            <tx:method name="select*" read-only="true"></tx:method>
+            <tx:method name="get*" read-only="true"></tx:method>
+        </tx:attributes>
+    </tx:advice>
 </beans:beans>
 
 

@@ -73,6 +73,11 @@
 	 	<property name="basePackage" value="com.buff.mapper.**, com.buff.**.mapper.**"/>
 	 </bean>
 	 
+	<!-- Transaction 설정하기 -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+	 
 	 <!-- 
 	 트랜잭션 : 데이터베이스를 변경하기 위해 수행되어야할 논리적 단위.여러개의 sql로 구성됨
 	 원자성, 일관성, 고립성(격리성), 지속성(영속성)
@@ -82,33 +87,6 @@
 <!-- 	 class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
 <!-- 		<property name="dataSource" ref="dataSource"></property> -->
 <!-- 	</bean> -->
-	
-	    <!-- Transaction 설정하기 -->
-    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"></property>
-    </bean>
-
-    <!-- AOP Pointcut/Advisor 설정 -->
-    <aop:config>
-        <aop:pointcut id="txMethod" expression="execution(* com.example..*Service.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="txMethod"/>
-    </aop:config>
-
-    <!-- AOP Transaction을 실행하는 대상 Method 설정 -->
-    <tx:advice id="txAdvice" transaction-manager="txManager">
-        <tx:attributes>
-            <tx:method name="insert*" rollback-for="Exception"></tx:method>
-            <tx:method name="create*" rollback-for="Exception"></tx:method>
-            <tx:method name="update*" rollback-for="Exception"></tx:method>
-            <tx:method name="delete*" rollback-for="Exception"></tx:method>
-            <tx:method name="edit*" rollback-for="Exception"></tx:method>
-            <tx:method name="regist*" rollback-for="Exception"></tx:method>
-            <tx:method name="remove*" rollback-for="Exception"></tx:method>
-            <tx:method name="select*" read-only="true"></tx:method>
-            <tx:method name="get*" read-only="true"></tx:method>
-        </tx:attributes>
-    </tx:advice>
-	
 	<!-- 애너테이션 기반의 트랜잭션 제어를 활성화함 -->
 <!-- 	<tx:annotation-driven/> -->
 </beans>

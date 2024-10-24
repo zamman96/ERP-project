@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -149,9 +151,7 @@ public class HdofcMenuServiceImpl implements HdofcMenuService{
 	* @param map
 	* @return      : 일반 메뉴 수정
 	*/
-	@Transactional
 	public int editMenu(MenuVO menuVO, List<RecipeVO> recipeVOList, MultipartFile file) {
-		
 		if(file!=null && file.getOriginalFilename().length() > 0) {
 			String menuImgPath = this.uploadController.imageUpload(file);
 			menuVO.setMenuImgPath(menuImgPath);
